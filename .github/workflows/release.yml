@@ -73,7 +73,8 @@ jobs:
         shell: bash
 
       - name: Build backend (PyInstaller)
-        run: pyinstaller --noconfirm --clean backend/MemAgent.spec
+        run: pyinstaller --noconfirm --clean MemAgent.spec
+        working-directory: backend
         shell: bash
 
       - name: Install NSIS
@@ -83,6 +84,7 @@ jobs:
       - name: Build Windows installer (NSIS)
         if: runner.os == 'Windows'
         run: |
+          New-Item -ItemType Directory -Force -Path release | Out-Null
           & "C:\Program Files (x86)\NSIS\makensis.exe" installer/installer.nsi
           Compress-Archive -Path backend/dist/MemAgent -DestinationPath release/MemAgent-windows-amd64-portable.zip -Force
         shell: pwsh
