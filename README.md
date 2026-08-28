@@ -95,10 +95,10 @@ powershell -ExecutionPolicy Bypass -File build_exe.ps1
 
 | 平台 | 安装包 | 大小 | 说明 |
 |---|---|---|---|
-| Windows | `MemAgent-windows-amd64-installer.exe` | 18.6 MB | **推荐**，NSIS 安装器，无需管理员权限 |
-| Windows | `MemAgent-windows-amd64-portable.zip` | 23.4 MB | 便携版，解压后运行 `MemAgent/MemAgent.exe` |
-| macOS | `MemAgent-darwin-arm64.tar.gz` | — | 自动构建（推送 `v*` 标签触发 Actions） |
-| Linux | `MemAgent-linux-amd64.tar.gz` | — | 自动构建（同上） |
+| Windows | [MemAgent-windows-amd64-installer.exe](https://github.com/furuilon/MemAgent/releases/latest/download/MemAgent-windows-amd64-installer.exe) | 18.6 MB | **推荐**，NSIS 安装器，无需管理员权限 |
+| Windows | [MemAgent-windows-amd64-portable.zip](https://github.com/furuilon/MemAgent/releases/latest/download/MemAgent-windows-amd64-portable.zip) | 23.4 MB | 便携版，解压后运行 `MemAgent/MemAgent.exe` |
+| macOS | [MemAgent-darwin-arm64.tar.gz](https://github.com/furuilon/MemAgent/releases/latest/download/MemAgent-darwin-arm64.tar.gz) | ~21 MB | Apple Silicon，自动构建 |
+| Linux | [MemAgent-linux-amd64.tar.gz](https://github.com/furuilon/MemAgent/releases/latest/download/MemAgent-linux-amd64.tar.gz) | ~20 MB | x86_64，自动构建 |
 | 源码 | `Source code (zip/tar.gz)` | 0.4 MB | `git clone` 即可 |
 
 > **多平台说明（已完成）：** Windows 双形态已就绪；macOS / Linux 由 `.github/workflows/release.yml` 定义的多平台矩阵自动构建，推送 `v*` 标签后自动产出对应安装包并上传至同一 Release，无需手动操作或改动源码结构。
@@ -263,10 +263,10 @@ powershell -ExecutionPolicy Bypass -File build_exe.ps1
 
 | Platform | Package | Size | Note |
 |---|---|---|---|
-| Windows | `MemAgent-windows-amd64-installer.exe` | 18.6 MB | **Recommended**, NSIS per-user installer, no admin required |
-| Windows | `MemAgent-windows-amd64-portable.zip` | 23.4 MB | Portable, unzip and run `MemAgent/MemAgent.exe` |
-| macOS | `MemAgent-darwin-arm64.tar.gz` | — | Auto-built via Release workflow (push `v*` tag) |
-| Linux | `MemAgent-linux-amd64.tar.gz` | — | Auto-built (same) |
+| Windows | [MemAgent-windows-amd64-installer.exe](https://github.com/furuilon/MemAgent/releases/latest/download/MemAgent-windows-amd64-installer.exe) | 18.6 MB | **Recommended**, NSIS per-user installer, no admin required |
+| Windows | [MemAgent-windows-amd64-portable.zip](https://github.com/furuilon/MemAgent/releases/latest/download/MemAgent-windows-amd64-portable.zip) | 23.4 MB | Portable, unzip and run `MemAgent/MemAgent.exe` |
+| macOS | [MemAgent-darwin-arm64.tar.gz](https://github.com/furuilon/MemAgent/releases/latest/download/MemAgent-darwin-arm64.tar.gz) | ~21 MB | Apple Silicon, auto-built |
+| Linux | [MemAgent-linux-amd64.tar.gz](https://github.com/furuilon/MemAgent/releases/latest/download/MemAgent-linux-amd64.tar.gz) | ~20 MB | x86_64, auto-built |
 | Source | `Source code (zip/tar.gz)` | 0.4 MB | `git clone` |
 
 > **Multi-platform note (done):** Windows dual-form is ready; macOS / Linux are auto-built by `.github/workflows/release.yml` multi-platform matrix. Pushing a `v*` tag produces all platform packages and uploads them to the same Release — no source changes needed.
