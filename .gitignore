@@ -26,3 +26,10 @@ backend/build/
 # 系统杂项
 .DS_Store
 Thumbs.db
+
+# 发布产物（成品 exe 通过 Releases 分发）
+release/
+MemAgent-成品/
+
+# TS 构建缓存
+tsconfig.tsbuildinfo
