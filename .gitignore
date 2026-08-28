@@ -31,5 +31,8 @@ Thumbs.db
 release/
 MemAgent-成品/
 
+# PPT 中间产物（在线飞书幻灯片，本地 XML 不入库）
+ppt/
+
 # TS 构建缓存
 tsconfig.tsbuildinfo
