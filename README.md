@@ -96,12 +96,12 @@ powershell -ExecutionPolicy Bypass -File build_exe.ps1
 | 平台 | 安装包 | 大小 | 说明 |
 |---|---|---|---|
 | Windows | `MemAgent-windows-amd64-installer.exe` | 18.6 MB | **推荐**，NSIS 安装器，无需管理员权限 |
-| Windows | `MemAgent-win64.zip` | 33.7 MB | 便携版，解压后运行 `MemAgent/MemAgent.exe` |
-| macOS | `MemAgent-macos-*.dmg` | — | 计划中，`Coming soon` |
-| Linux | `MemAgent-linux-*.tar.gz` / `.deb` | — | 计划中，`Coming soon` |
+| Windows | `MemAgent-windows-amd64-portable.zip` | 23.4 MB | 便携版，解压后运行 `MemAgent/MemAgent.exe` |
+| macOS | `MemAgent-darwin-arm64.tar.gz` | — | 自动构建（推送 `v*` 标签触发 Actions） |
+| Linux | `MemAgent-linux-amd64.tar.gz` | — | 自动构建（同上） |
 | 源码 | `Source code (zip/tar.gz)` | 0.4 MB | `git clone` 即可 |
 
-> **关于多平台扩展：** 上表已预留 macOS / Linux 行，当前 Windows 版本已满足赛题要求。后续通过 `make cross` 交叉编译产出其他平台包后，同流程追加到同一 Release 即可，**无需改动现有源码结构，现在无需任何额外操作。**
+> **多平台说明（已完成）：** Windows 双形态已就绪；macOS / Linux 由 `.github/workflows/release.yml` 定义的多平台矩阵自动构建，推送 `v*` 标签后自动产出对应安装包并上传至同一 Release，无需手动操作或改动源码结构。
 
 ### 架构
 
@@ -264,12 +264,12 @@ powershell -ExecutionPolicy Bypass -File build_exe.ps1
 | Platform | Package | Size | Note |
 |---|---|---|---|
 | Windows | `MemAgent-windows-amd64-installer.exe` | 18.6 MB | **Recommended**, NSIS per-user installer, no admin required |
-| Windows | `MemAgent-win64.zip` | 33.7 MB | Portable, unzip and run `MemAgent/MemAgent.exe` |
-| macOS | `MemAgent-macos-*.dmg` | — | Planned, *Coming soon* |
-| Linux | `MemAgent-linux-*.tar.gz` / `.deb` | — | Planned, *Coming soon* |
+| Windows | `MemAgent-windows-amd64-portable.zip` | 23.4 MB | Portable, unzip and run `MemAgent/MemAgent.exe` |
+| macOS | `MemAgent-darwin-arm64.tar.gz` | — | Auto-built via Release workflow (push `v*` tag) |
+| Linux | `MemAgent-linux-amd64.tar.gz` | — | Auto-built (same) |
 | Source | `Source code (zip/tar.gz)` | 0.4 MB | `git clone` |
 
-> **Multi-platform note:** The table reserves rows for macOS / Linux. The current Windows build fully satisfies the competition requirements. Future `make cross` builds for other platforms can be appended to the same Release without any source structure changes — **no action needed now.**
+> **Multi-platform note (done):** Windows dual-form is ready; macOS / Linux are auto-built by `.github/workflows/release.yml` multi-platform matrix. Pushing a `v*` tag produces all platform packages and uploads them to the same Release — no source changes needed.
 
 ### Architecture
 
