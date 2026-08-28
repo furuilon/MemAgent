@@ -1,117 +1,137 @@
-# MemAgent · 会记住你的 Agent
+<p align="center">
+  <a href="#english">English</a> · <a href="#-memagent--会记住你的-agent">简体中文</a> · <a href="#quick-start--快速开始">Quick Start</a> · <a href="#download--下载">Download</a> · <a href="#architecture--架构">Architecture</a>
+</p>
 
-> 七牛云赛道 —— 具备反馈记忆能力的轻量 Agent 系统
->
-> 用户下达任务 → Agent 规划、调用工具、生成结果 → 用户修改/反馈 → 系统蒸馏沉淀记忆 → 后续同类任务自动应用偏好。
+<p align="center">
+  <img src="frontend/public/favicon.png" width="72" height="72" alt="MemAgent logo" />
+</p>
+<h1 align="center">MemAgent</h1>
+<p align="center">A lightweight agent that learns from your feedback.</p>
+<p align="center">会记住你的 Agent</p>
 
-## 演示主线（3 分钟）
+<p align="center">
+  <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT" /></a>
+  <img src="https://img.shields.io/badge/python-3.11+-3776AB?logo=python" alt="Python 3.11+" />
+  <img src="https://img.shields.io/badge/react-19-61DAFB?logo=react" alt="React 19" />
+  <img src="https://img.shields.io/badge/fastapi-0.111-009688?logo=fastapi" alt="FastAPI" />
+</p>
 
-1. 输入「帮我生成本周的工作周报」→ 得到一份平庸的通用周报
-2. 点击「教它一下」，输入：*“别用表格，用要点列表；语气正式一点；突出数据成果”*
-3. 观察右侧记忆库实时新增 3 条结构化规则（蒸馏动画）
-4. 再次生成同类任务 → 新结果**自动遵守全部偏好**，界面标注「已应用记忆」
-5. 打开右上角成本仪表盘：token 计量、延迟统计、A/B 对照实验数据
+---
 
-## 架构
+<a id="english"></a>
+## English
 
-```
-Web UI (React/Vite/Tailwind)
-   │ SSE 流式
-FastAPI Backend
-   ├─ Planner        任务规划，选择工具（JSON 协议，供应商无关）
-   ├─ Tool Executor  8 个预置工具：工作记录 / 记忆检索 / 报告保存 + 本地文件增删改查
-   ├─ Generator      结合素材+记忆流式生成
-   └─ Memory System  ←—— 核心创新
-       ├─ Extractor  LLM 把反馈蒸馏成原子化规则（不存原始对话）
-       ├─ Store      SQLite 结构化存储
-       ├─ Retriever  场景标签过滤 + 字符 n-gram 余弦相似度混合排序
-       └─ Injector   预算内压缩注入 prompt（默认 ≤300 token）
-File Access        双模式文件系统
-   ├─ sandbox（默认） 仅 workspace/ 目录，路径越界自动拦截
-   ├─ full            授权后读写整台电脑；Windows、Program Files
-   │                  等受保护目录仍被强制拦截
-Eval Module
-   ├─ Tracker        每次 LLM 调用的 token/延迟/用途打点
-   ├─ Judge          LLM-as-Judge 逐条判定输出是否遵守偏好
-   └─ A/B Test       同任务 × {无记忆, 有记忆} 对照实验
-```
+### What is MemAgent?
 
-## 快速开始
+MemAgent is a **lightweight feedback-memory agent** built for the Qiniu Cloud track. You give it a task, it plans, calls preset tools, and generates a result. When you edit the result or leave a comment, it distills the feedback into structured rules (*preference / rule / experience*) and automatically applies them to the next similar task.
+
+**Core loop:** `Task → Plan → Tools → Generate → Feedback → Distill → Auto-apply`
+
+### Features
+
+| Feature | Description |
+|---|---|
+| **Feedback Distillation** | One comment like “use bullet points, no tables” becomes a permanent rule |
+| **Hybrid Retrieval** | Scope-tag filter + character n-gram cosine, ranked by confidence & usage |
+| **Cost Dashboard** | Every LLM call logged by token/latency/purpose, visualized |
+| **A/B Lab** | Side-by-side `no-memory vs with-memory` live comparison + LLM-as-Judge score |
+| **File Workspace** | Sandbox / Full-disk dual mode, local file CRUD with safety guard |
+| **Session Memory** | Recent turns injected as short-term context |
+
+### Quick Start / 快速开始
 
 ```bash
-# 1. 配置 key（支持 DeepSeek / 七牛云 / OpenAI / Ollama，OpenAI 兼容协议一行切换）
-cp backend/.env.example backend/.env    # 填入 LLM_API_KEY
+# 1. Configure LLM (DeepSeek / Qiniu / OpenAI / Ollama - OpenAI compatible)
+cp backend/.env.example backend/.env  # then fill LLM_API_KEY
 
-# 2a. 后端
+# 2a. Backend
 cd backend
-python -m venv .venv                    # 已有 .venv 可跳过
+python -m venv .venv
 .venv\Scripts\pip install -r requirements.txt
 .venv\Scripts\python -m uvicorn app.main:app --port 8000 --reload
 
-# 2b. 前端
+# 2b. Frontend
 cd frontend
 npm install
 npm run dev
 
-# 或一键启动（Windows）
-powershell -File start.ps1
+# Or one-click (Windows)
+powershell -ExecutionPolicy Bypass -File start.ps1
 ```
 
-打开 http://localhost:5173
+Open `http://localhost:5173`. For desktop build: `powershell -ExecutionPolicy Bypass -File build_exe.ps1`.
 
-## 关键设计（对应官方考查点）
+### Download / 下载
 
-| 考查点 | 方案 |
-|-------|------|
-| **记忆成本** | 只存蒸馏后的原子规则而非对话历史；注入前按 token 预算截断；检索零向量库依赖（纯 Python n-gram），仪表盘可视化每次调用开销 |
-| **对话速度** | SSE 流式输出；规划失败自动降级兜底方案不阻塞；本地检索 <1ms |
-| **记忆效果** | A/B 对照实验 + LLM-as-Judge 偏好遵循率量化报告；重复反馈自动合并去重；界面标注「已应用记忆」保证可解释性 |
+> **Source code is clean (0.4 MB). Executables are never committed — get them from [Releases](../../releases).**
 
-## API 一览
+| Platform | Package | Note |
+|---|---|---|
+| Windows | `MemAgent-windows-amd64-installer.exe` (18.6 MB) | NSIS per-user installer, no admin required |
+| Windows | `MemAgent-win64.zip` (33.7 MB) | Portable, unzip and run `MemAgent/MemAgent.exe` |
+| macOS / Linux | Source only | `npm run dev` + `uvicorn` (contributions welcome) |
 
-| 方法 | 路径 | 说明 |
-|------|------|------|
-| POST | `/api/task/stream` | 执行任务（SSE 流式事件） |
-| POST | `/api/task` | 执行任务（JSON，评测用） |
-| POST | `/api/feedback` | 提交反馈 → 蒸馏记忆 |
-| GET/POST/DELETE | `/api/memories` | 记忆管理 |
-| GET | `/api/metrics/summary` | 成本汇总 |
-| POST | `/api/eval/run` | 运行 A/B 对照实验 |
-| GET | `/api/eval/latest` | 最近一次评测报告 |
+All releases are at `Releases` → `Assets`. The installer is a single `exe` file, not a folder.
 
-## 目录规范
+### Architecture / 架构
+
+```
+Web UI (React/Vite/Tailwind) — SSE streaming
+  │
+FastAPI Backend
+  ├─ Planner        JSON-step planning (provider-agnostic)
+  ├─ Executor       8 tools: get_task_records / search_memory / save_report + file CRUD
+  ├─ Generator      Prompt assembly with budget control (≤300 tokens for memories)
+  └─ Memory System
+      ├─ Extractor  Distills feedback → atomic rules
+      ├─ Store      SQLite structured store
+      ├─ Retriever  Scope filter + n-gram cosine, confidence-boosted ranking
+      └─ Injector   Budget-aware injection
+
+File Access: sandbox (workspace/ only) ↔ full (whole disk, system dirs blocked)
+Eval: Tracker → Judge → A/B Test
+```
+
+### Project Structure / 目录
 
 ```
 backend/app/
-├── api/            路由层：providers / history / workspace
-├── agent/          Agent 域：orchestrator + planner + generator + routes(任务)
-├── memory/         记忆系统四件套
-├── tools/          工具注册表 + 内置工具 + 文件工具（双模式沙箱）
-├── llm/            OpenAI 兼容客户端 + 按事件循环缓存的多供应商工厂
-├── eval/           打点 / Judge / A/B
-└── scripts/        smoke.py 一键集成检查（10 组用例）
-frontend/src/components/   PascalCase 组件，一个组件一个职责
+├── api/          providers / history / workspace
+├── agent/        orchestrator / planner / generator / routes
+├── memory/       extractor / store / retriever / injector
+├── tools/        registry / builtin / files (dual-mode sandbox)
+├── llm/          OpenAI-compatible client + multi-provider factory
+├── eval/         tracker / judge / ab_test
+└── scripts/      smoke.py / parallel_check.py / gen_icon.py
+frontend/src/
+├── components/   Header / Sidebar / Composer / ReportCanvas / Memory* …
+└── lib/api.ts    Typed API layer
+installer/installer.nsi  NSIS per-user installer (like Reasonix)
 ```
 
-## 打包为 Windows 桌面应用
+---
 
-```powershell
-powershell -ExecutionPolicy Bypass -File build_exe.ps1
-# 产物: backend/dist/MemAgent.exe (约 34MB, 双击即用)
-```
+<a id="-memagent--会记住你的-agent"></a>
+## 简体中文
 
-- 单文件内置前端 + 后端 + 沙箱，数据(.db/记忆/工作区)生成在 exe 同目录
-- API Key 配置方式二选一：exe 同目录放 `.env`，或启动后在设置页填入
-- 窗口基于 WebView2(Win10/11 自带)；异常时自动回退默认浏览器
+### MemAgent 是什么？
 
-## 切换到七牛云
+MemAgent 是为**七牛云赛道**打造的轻量反馈记忆 Agent。核心能力：你提一句反馈，它提炼成可复用的规则，下次同类任务自动遵守。
 
-编辑 `backend/.env`：
+### 对应赛题考查点
 
-```
-LLM_BASE_URL=https://api.qnaigc.com/v1
-LLM_API_KEY=sk-xxx
-LLM_MODEL=deepseek-v3
-```
+| 考查点 | 我们的方案 |
+|---|---|
+| 记忆成本 | 只存蒸馏规则，注入按预算截断，零向量库依赖，成本仪表盘可视化 |
+| 对话速度 | SSE 流式 + 工具并行 + 进度事件，本地检索 <1ms |
+| 记忆效果 | A/B 对照 + LLM-as-Judge 逐条判定遵循率，已应用记忆高亮可解释 |
 
-离线兜底：`LLM_BASE_URL=http://localhost:11434/v1` + Ollama。
+### 真实场景
+
+**智能周报助手**（每周重复、个性化强）+ 本地文件整理（读写真实磁盘）。
+
+---
+
+## License
+
+MIT © 2025 MemAgent Team
