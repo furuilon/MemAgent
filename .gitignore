@@ -1,0 +1,28 @@
+﻿# Python
+.venv/
+__pycache__/
+*.pyc
+
+# 环境与密钥（绝对不要提交）
+.env
+*.env.local
+
+# 数据库（运行时自动重建，只忽略 db 文件本身）
+backend/data/*.db
+backend/data/*.db-*
+backend/data/startup.log
+
+# Node / 前端构建产物
+node_modules/
+dist/
+vite-dev.log
+backend/frontend_dist/
+
+# PyInstaller 构建产物
+backend/dist/
+backend/build/
+*.spec.bak
+
+# 系统杂项
+.DS_Store
+Thumbs.db
