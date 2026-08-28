@@ -76,6 +76,10 @@ jobs:
         run: pyinstaller --noconfirm --clean backend/MemAgent.spec
         shell: bash
 
+      - name: Install NSIS
+        if: runner.os == 'Windows'
+        run: choco install nsis -y
+
       - name: Build Windows installer (NSIS)
         if: runner.os == 'Windows'
         run: |
